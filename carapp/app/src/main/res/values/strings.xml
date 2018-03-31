@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">carapp</string>
+    <string name="main_act">Main activity</string>
+    <string name="button_text">Call Google Sheets API</string>
+    <string name="pref_account_name">accountName</string>
+
+</resources>
