@@ -59,7 +59,8 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
 
 
-    private static final String BUTTON_TEXT = "@string/button_text";
+    private final String BUTTON_TEXT = "strings/button_text";
+    String get_res = getString(R.string.button_text);
     private static final String PREF_ACCOUNT_NAME = "@string/pref_account_name";
     private static final String[] SCOPES = { SheetsScopes.SPREADSHEETS_READONLY };
 
@@ -101,7 +102,7 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
         mOutputText.setVerticalScrollBarEnabled(true);
         mOutputText.setMovementMethod(new ScrollingMovementMethod());
         mOutputText.setText(
-                "Click the \'" + BUTTON_TEXT +"\' button to test the API.");
+                "Click the \'" + get_res +"\' button to test the API.");
         activityLayout.addView(mOutputText);
 
         mProgress = new ProgressDialog(this);
