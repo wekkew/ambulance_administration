@@ -45,8 +45,9 @@ public class MyArrayAdapter extends ArrayAdapter<MyDataModel> {
 
         MyDataModel item = getItem(position);
 
-        vh.textViewName.setText(item.getNumber());
-        vh.textViewCountry.setText(item.getName());
+        vh.textViewName.setText(item.getName());
+        vh.textViewTime.setText(item.getTime());
+        vh.textViewValue.setText(item.getValue() + "");
 
         return vh.rootView;
     }
@@ -61,18 +62,21 @@ public class MyArrayAdapter extends ArrayAdapter<MyDataModel> {
         public final RelativeLayout rootView;
 
         public final TextView textViewName;
-        public final TextView textViewCountry;
+        public final TextView textViewTime;
+        public final TextView textViewValue;
 
-        private ViewHolder(RelativeLayout rootView, TextView textViewName, TextView textViewCountry) {
+        private ViewHolder(RelativeLayout rootView, TextView textViewName, TextView textViewTime, TextView textViewValue) {
             this.rootView = rootView;
             this.textViewName = textViewName;
-            this.textViewCountry = textViewCountry;
+            this.textViewTime = textViewTime;
+            this.textViewValue = textViewValue;
         }
 
         public static ViewHolder create(RelativeLayout rootView) {
             TextView textViewName = (TextView) rootView.findViewById(R.id.textViewName);
-            TextView textViewCountry = (TextView) rootView.findViewById(R.id.textViewCountry);
-            return new ViewHolder(rootView, textViewName, textViewCountry);
+            TextView textViewTime = (TextView) rootView.findViewById(R.id.textViewTime);
+            TextView textViewValue = (TextView) rootView.findViewById(R.id.textViewValue);
+            return new ViewHolder(rootView, textViewName, textViewTime, textViewValue);
         }
     }
 }

@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -29,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import static java.lang.Integer.parseInt;
 
@@ -85,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
                 boolean intConn = InternetConnection.checkConnection((getApplicationContext()));
 
                 if (intConn) {
-                    Log.d("tag", "logg");
                     new GetDataTask().execute();
                 } else {
                     Snackbar.make(view, "Internet Connection Not Available", Snackbar.LENGTH_LONG).show();
@@ -144,48 +145,11 @@ public class MainActivity extends AppCompatActivity {
                         /**
                          * Getting Array named "contacts" From MAIN Json Object
                          */
-                        JSONArray array = jsonObject.getJSONArray(Keys.KEY_CONTACTS);
 
-                        /**
-                         * Check Length of Array...
-                         */
-
-
-                        int lenArray = array.length();
-                        if(lenArray > 0) {
-                            for( ; jIndex < lenArray; jIndex++) {
-
-                                /**
-                                 * Creating Every time New Object
-                                 * and
-                                 * Adding into List
-                                 */
-                                MyDataModel model = new MyDataModel();
-
-                                /**
-                                 * Getting Inner Object from contacts array...
-                                 * and
-                                 * From that We will get Name of that Contact
-                                 *
-                                 */
-                                JSONObject innerObject = array.getJSONObject(jIndex);
-                                int name = parseInt(innerObject.getString(Keys.KEY_NAME));
-                                String country = innerObject.getString(Keys.KEY_COUNTRY);
-
-                                /**
-                                 * Getting Object from Object "phone"
-                                 */
-                                //JSONObject phoneObject = innerObject.getJSONObject(Keys.KEY_PHONE);
-                                //String phone = phoneObject.getString(Keys.KEY_MOBILE);
-
-                                model.setNumber(name);
-                                model.setName(country);
-
-                                /**
-                                 * Adding name and phone concatenation in List...
-                                 */
-                                list.add(model);
-                            }
+                        Iterator<String> keys = jsonObject.keys();
+                        while(keys.hasNext()) {
+                            JSONArray array = jsonObject.getJSONArray(keys.next());
+                            arrayOperations(array);
                         }
                     }
                 } else {
@@ -197,19 +161,50 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
 
+        private void arrayOperations(JSONArray array) {
+            try {
+
+                int lenArray = array.length();
+                if(lenArray > 0) {
+                    for( ; jIndex < lenArray; jIndex++) {
+
+                        MyDataModel model = new MyDataModel();
+
+                        JSONObject innerObject = array.getJSONObject(jIndex);
+                        String name = innerObject.getString(Keys.KEY_NAME);
+                        String time = innerObject.getString(Keys.KEY_TIMESTAMP);
+                        int value = parseInt(innerObject.getString(Keys.KEY_VALUE));
+
+                        model.setName(name);
+                        model.setTime(time);
+                        model.setValue(value);
+
+                        list.add(model);
+                    }
+                }
+            } catch (JSONException je) {
+                Log.i(JSONparser.TAG, "" + je.getLocalizedMessage());
+            }
+        }
+
         @Override
         protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            dialog.dismiss();
-            /**
-             * Checking if List size if more than zero then
-             * Update ListView
-             */
-            if(list.size() > 0) {
-                adapter.notifyDataSetChanged();
-            } else {
-                Snackbar.make(findViewById(R.id.parentLayout), "No Data Found", Snackbar.LENGTH_LONG).show();
+            try {
+                super.onPostExecute(aVoid);
+                dialog.dismiss();
+                /**
+                 * Checking if List size if more than zero then
+                 * Update ListView
+                 */
+                if(list.size() > 0) {
+                    adapter.notifyDataSetChanged();
+                } else {
+                    Snackbar.make(findViewById(R.id.parentLayout), "No Data Found", Snackbar.LENGTH_LONG).show();
+                }
+            } catch (Exception e){
+                Log.d(JSONparser.TAG, e.getLocalizedMessage());
             }
+
         }
     }
 }

@@ -21,7 +21,15 @@
             tools:text="TextView" />
 
         <TextView
-            android:id="@+id/textViewCountry"
+            android:id="@+id/textViewTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:textAppearance="?android:textAppearanceLarge"
+            tools:text="TextView" />
+
+        <TextView
+            android:id="@+id/textViewValue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
