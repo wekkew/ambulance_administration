@@ -3,6 +3,7 @@
 package com.carapp.sheets;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -70,31 +71,30 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /**
-         * Just to know onClick and Printing Hello Toast in Center.
+         * Checking Internet Connection
          */
-        Toast toast = Toast.makeText(getApplicationContext(), "Click on FloatingActionButton to Load JSON", Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
+        boolean intConn = InternetConnection.checkConnection((getApplicationContext()));
+
+        if (intConn) {
+            new GetDataTask().execute();
+        } else {
+            Snackbar.make(findViewById(R.id.parentLayout), "Internet Connection Not Available", Snackbar.LENGTH_LONG).show();
+        }
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(@NonNull View view) {
-
-                /**
-                 * Checking Internet Connection
-                 */
-                boolean intConn = InternetConnection.checkConnection((getApplicationContext()));
-
-                if (intConn) {
-                    new GetDataTask().execute();
-                } else {
-                    Snackbar.make(view, "Internet Connection Not Available", Snackbar.LENGTH_LONG).show();
-                }
+                addActivity();
             }
         });
     }
+    public void addActivity() {
+        Intent intent = new Intent(this, AddActivity.class);
 
+        startActivity(intent);
+    }
     /**
      * Creating Get Data Task for Getting Data From Web
      */
