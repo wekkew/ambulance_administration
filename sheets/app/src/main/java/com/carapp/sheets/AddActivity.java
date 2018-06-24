@@ -55,24 +55,35 @@ public class AddActivity extends AppCompatActivity {
 
     public void onSubmit(View view) {
         EditText inputNameField = (EditText) findViewById(R.id.inputName);
-        InputName = inputNameField.getText().toString();
         EditText inputValueField = (EditText) findViewById(R.id.inputValue);
-        InputValue = inputValueField.getText().toString();
 
-        new GetDataPostTask().execute();
+        if (validateInput(inputNameField, inputValueField)) {
+            InputName = inputNameField.getText().toString();
+            InputValue = inputValueField.getText().toString();
+            IHttpMethod method = new PostMethod();
+            GetDataPostTask gdpt = new GetDataPostTask(method);
+            gdpt.execute();
+        }
 
-
-        Snackbar.make(view, "message", Snackbar.LENGTH_LONG).show();
-
+        returnToMain();
     }
 
     public void onCancel(View view) {
         Snackbar.make(view, "Voila im canceling", Snackbar.LENGTH_LONG).show();
+        returnToMain();
+    }
+
+    private void returnToMain() {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
     }
 
-    class PostMethod {
+    private boolean validateInput(EditText name, EditText value) {
+
+        return false;
+    }
+
+    class PostMethod implements IHttpMethod {
 
         private static final String SheetName = "Sheet1";
         private static final String BASE_URL = "https://script.google.com/macros/s/AKfycbz_wpfJN787dOKsxGL9B4PZjCLGvQAGY37x2Tvcp6AxxAEWqWI/exec";
@@ -86,7 +97,12 @@ public class AddActivity extends AppCompatActivity {
 
         private Response response;
 
-        public JSONObject Post(String name, String value) {
+        @Override
+        public JSONObject Send() {
+            return Send(AddActivity.InputName, AddActivity.InputValue);
+        }
+
+        private JSONObject Send(String name, String value) {
             try {
                 OkHttpClient client = new OkHttpClient();
 
@@ -113,9 +129,11 @@ public class AddActivity extends AppCompatActivity {
 
     class GetDataPostTask extends AsyncTask<Void, Void, Void> {
 
-        ProgressDialog dialog;
-        int jIndex;
-        int x;
+        protected IHttpMethod Method;
+
+        GetDataPostTask(IHttpMethod method) {
+            Method = method;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -126,27 +144,7 @@ public class AddActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
 
-            /**
-             * Getting JSON Object from Web Using okHttp
-             */
-            JSONObject jsonObject = new PostMethod().Post(AddActivity.InputName, AddActivity.InputValue);
-
-            /**
-             * Check Whether Its NULL???
-             */
-            if (jsonObject != null) {
-                /**
-                 * Check Length...
-                 */
-                if (jsonObject.length() > 0) {
-                    /**
-                     * Getting answere
-                     */
-
-
-                }
-                return null;
-            }
+            JSONObject jsonObject = Method.Send();
             return null;
         }
 
@@ -155,4 +153,8 @@ public class AddActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
         }
     }
+}
+
+interface IHttpMethod {
+    public JSONObject Send();
 }
